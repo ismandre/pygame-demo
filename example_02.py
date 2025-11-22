@@ -1,0 +1,105 @@
+import pygame
+import sys
+from pygame.locals import *
+
+pygame.init()
+
+PLAYER_ASSETS = "apples_pack_60x60px"
+APPLE_ASSETS = "apples_pack_60x60px"
+
+font_small = pygame.font.SysFont("Verdana", 20)
+
+SCREEN_WIDTH = 900
+SCREEN_HEIGHT = 700
+
+APPLES_IN_COL = 10
+APPLES_IN_ROW = 5
+
+FPS = 60
+clock = pygame.time.Clock()
+
+TOTAL_SCORE = 0
+
+
+
+surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+surface.fill((255, 255, 255))
+pygame.display.set_caption("Game")
+
+
+class Apple(pygame.sprite.Sprite):
+    def __init__(self, center):
+        super().__init__()
+        self.image = pygame.image.load(f"{APPLE_ASSETS}/apple_regular_60x60px.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (160, 520)
+
+    def move(self):
+        pressed = pygame.key.get_pressed()
+
+        if self.rect.left > 0:
+            if pressed[K_LEFT]:
+                self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
+                self.rect.move_ip(-5, 0)
+        if self.rect.right < SCREEN_WIDTH:
+            if pressed[K_RIGHT]:
+                self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
+                self.rect.move_ip(5, 0)
+        if self.rect.top > 0:
+            if pressed[K_UP]:
+                self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
+                self.rect.move_ip(0, -5)
+        if self.rect.bottom < SCREEN_HEIGHT:
+            if pressed[K_DOWN]:
+                self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
+                self.rect.move_ip(0, 5)
+
+P1 = Player()
+
+apples = pygame.sprite.Group()
+# Create a grid of apples
+apple_grid = []
+for y in range(APPLES_IN_COL):
+    for x in range(APPLES_IN_ROW):
+        apple_x = int((x / APPLES_IN_ROW) * SCREEN_WIDTH) + 30
+        apple_y = int((y / APPLES_IN_COL) * SCREEN_HEIGHT) + 30
+        print(apple_x, apple_y)
+        apple = Apple((apple_x, apple_y))
+        apple_grid.append(apple)
+apples.add(apple_grid)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+
+    surface.fill((255, 255, 255))
+
+    scores = font_small.render(f"Score: {TOTAL_SCORE}", True, (0, 0, 0))
+    surface.blit(scores, (10, 10))
+
+    for apple in apples:
+        surface.blit(apple.image, apple.rect)
+
+    collided_apple = pygame.sprite.spritecollideany(P1, apples)
+    if collided_apple:
+        TOTAL_SCORE += 1
+        collided_apple.kill()
+
+    surface.blit(P1.image, P1.rect)
+    P1.move()
+
+    pygame.display.update()
+    clock.tick(FPS)
+
+
+
