@@ -6,6 +6,7 @@ pygame.init()
 
 PLAYER_ASSETS = "apples_pack_60x60px"
 APPLE_ASSETS = "apples_pack_60x60px"
+OBSTACLE_ASSETS = "Dungeon assets (extract.me)/PNG/Pole/Outline/Pole_outline_green1.png"
 
 font_small = pygame.font.SysFont("Verdana", 20)
 
@@ -25,6 +26,16 @@ TOTAL_SCORE = 0
 surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 surface.fill((255, 255, 255))
 pygame.display.set_caption("Game")
+
+
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load(OBSTACLE_ASSETS)
+        self.image = pygame.transform.scale(self.image, (60, 120))
+        self.rect = self.image.get_rect()
+        self.rect.center = (300, 300)
+
 
 
 class Apple(pygame.sprite.Sprite):
@@ -63,6 +74,7 @@ class Player(pygame.sprite.Sprite):
                 self.rect.move_ip(0, 5)
 
 P1 = Player()
+obstacle = Obstacle()
 
 apples = pygame.sprite.Group()
 # Create a grid of apples
@@ -86,6 +98,8 @@ while True:
 
     scores = font_small.render(f"Score: {TOTAL_SCORE}", True, (0, 0, 0))
     surface.blit(scores, (10, 10))
+
+    surface.blit(obstacle.image, obstacle.rect)
 
     for apple in apples:
         surface.blit(apple.image, apple.rect)
