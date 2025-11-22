@@ -42,6 +42,7 @@ class Apple(pygame.sprite.Sprite):
     def __init__(self, center):
         super().__init__()
         self.image = pygame.image.load(f"{APPLE_ASSETS}/apple_regular_60x60px.png")
+        self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect()
         self.rect.center = center
 
@@ -50,6 +51,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
+        self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.rect.center = (160, 520)
 
@@ -58,19 +60,15 @@ class Player(pygame.sprite.Sprite):
 
         if self.rect.left > 0:
             if pressed[K_LEFT]:
-                self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
                 self.rect.move_ip(-5, 0)
         if self.rect.right < SCREEN_WIDTH:
             if pressed[K_RIGHT]:
-                self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
                 self.rect.move_ip(5, 0)
         if self.rect.top > 0:
             if pressed[K_UP]:
-                self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
                 self.rect.move_ip(0, -5)
         if self.rect.bottom < SCREEN_HEIGHT:
             if pressed[K_DOWN]:
-                self.image = pygame.image.load(f"{PLAYER_ASSETS}/apple_golden_60x60px.png")
                 self.rect.move_ip(0, 5)
 
 P1 = Player()
