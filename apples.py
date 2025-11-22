@@ -55,21 +55,31 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (160, 520)
 
-    def move(self):
+    def move(self, obstacle):
+        movement = 5
         pressed = pygame.key.get_pressed()
 
-        if self.rect.left > 0:
+        new_rect = self.rect.copy()
+        if pressed[K_LEFT] and self.rect.left > 0:
+            new_rect.x -= movement
+        if pressed[K_RIGHT] and self.rect.right < SCREEN_WIDTH:
+            new_rect.x += movement
+        if pressed[K_UP] and self.rect.top > 0:
+            new_rect.y -= movement
+        if pressed[K_DOWN] and self.rect.bottom < SCREEN_HEIGHT:
+            new_rect.y += movement
+
+        if new_rect.colliderect(obstacle.rect):
             if pressed[K_LEFT]:
-                self.rect.move_ip(-5, 0)
-        if self.rect.right < SCREEN_WIDTH:
+                self.rect.left = obstacle.rect.right
             if pressed[K_RIGHT]:
-                self.rect.move_ip(5, 0)
-        if self.rect.top > 0:
+                self.rect.right = obstacle.rect.left
             if pressed[K_UP]:
-                self.rect.move_ip(0, -5)
-        if self.rect.bottom < SCREEN_HEIGHT:
+                self.rect.top = obstacle.rect.bottom
             if pressed[K_DOWN]:
-                self.rect.move_ip(0, 5)
+                self.rect.bottom = obstacle.rect.top
+        else:
+            self.rect = new_rect
 
 P1 = Player()
 obstacle = Obstacle()
@@ -107,8 +117,10 @@ while True:
         TOTAL_SCORE += 1
         collided_apple.kill()
 
+
+
     surface.blit(P1.image, P1.rect)
-    P1.move()
+    P1.move(obstacle)
 
     pygame.display.update()
     clock.tick(FPS)
